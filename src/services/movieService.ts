@@ -1,18 +1,20 @@
 import axios from "axios";
-import type { Movie } from "../types/movie";
+import type { MovieResponse } from "../types/movie";
 
 const API_URL = "https://api.themoviedb.org/3/search/movie";
 
 interface FetchMoviesParams {
   query: string;
+  page?: number;
 }
-interface MovieResponse {
-  results: Movie[];
-}
+// interface MovieResponse {
+//   results: Movie[];
+// }
 
 export async function fetchMovies({
   query,
-}: FetchMoviesParams): Promise<Movie[]> {
+  page = 1,
+}: FetchMoviesParams): Promise<MovieResponse> {
   const token = import.meta.env.VITE_TMDB_TOKEN;
 
   console.log("🔍 Запит на фільми з query:", query);
@@ -23,14 +25,14 @@ export async function fetchMovies({
         query,
         include_adult: false,
         language: "en-US",
-        page: 1,
+        page,
       },
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("✅ Отримано фільми:", response.data.results);
-    return response.data.results;
+    console.log("✅ Отримано фільми:", response.data);
+    return response.data;
   } catch (error) {
     console.error("Error fetching movies:", error);
     throw error;
