@@ -1,20 +1,24 @@
 import axios from "axios";
-import type { MovieResponse } from "../types/movie";
+// import type { MovieResponse } from "../types/movie";
+import type { Movie } from "../types/movie";
 
 const API_URL = "https://api.themoviedb.org/3/search/movie";
 
-interface FetchMoviesParams {
-  query: string;
-  page?: number;
-}
-// interface MovieResponse {
-//   results: Movie[];
+// interface FetchMoviesParams {
+//   query: string;
+//   page?: number;
 // }
+export interface MovieResponse {
+  page: number;
+  results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
 
-export async function fetchMovies({
-  query,
-  page = 1,
-}: FetchMoviesParams): Promise<MovieResponse> {
+export async function fetchMovies(
+  query: string,
+  page: number = 1
+): Promise<MovieResponse> {
   const token = import.meta.env.VITE_TMDB_TOKEN;
 
   console.log("🔍 Запит на фільми з query:", query);

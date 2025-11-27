@@ -6,8 +6,9 @@ import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
 import type { Movie } from "../../types/movie";
-// import { fetchMovies } from "../../services/movieService";
-import { fetchMovies } from "../../api/movies";
+import { fetchMovies } from "../../services/movieService";
+import type { MovieResponse } from "../../services/movieService";
+// import { fetchMovies } from "../../api/movies";
 import toast from "react-hot-toast";
 import styles from "./App.module.css";
 import { Toaster } from "react-hot-toast";
@@ -63,14 +64,15 @@ import ReactPaginate from "react-paginate";
 // }
 
 function App() {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery<MovieResponse, Error>({
     queryKey: ["movies", query, page],
     queryFn: () => fetchMovies(query, page),
     enabled: !!query,
+    staleTime: 5000,
   });
 
   useEffect(() => {
@@ -83,7 +85,7 @@ function App() {
     <>
       <Toaster />
       <SearchBar
-        onSubmit={(q) => {
+        onSubmit={(q: string) => {
           setQuery(q);
           setPage(1);
         }}
@@ -103,7 +105,7 @@ function App() {
         />
       )}
 
-      {data && data.total_pages > 1 && (
+      {data?.total_pages && data.total_pages > 1 && (
         <ReactPaginate
           pageCount={data.total_pages}
           pageRangeDisplayed={5}
